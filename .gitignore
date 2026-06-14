@@ -1,0 +1,11 @@
+# Mengabaikan semua file .env
+.env
+**/.env
+
+# Mengabaikan folder vendor/binary bawaan Go
+worker/worker
+api-gateway/api-gateway
+bin/
+
+structur.md
+docker-compose_local.yml

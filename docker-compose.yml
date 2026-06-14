@@ -1,0 +1,26 @@
+services:
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: ai-worker
+    env_file:
+      - ./worker/.env
+    restart: unless-stopped
+    networks:
+      - ai-network
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: telegram-bot
+    env_file:
+      - ./api-gateway/.env
+    restart: unless-stopped
+    networks:
+      - ai-network
+
+networks:
+  ai-network:
+    external: true
