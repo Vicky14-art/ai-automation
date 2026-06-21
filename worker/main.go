@@ -97,8 +97,9 @@ func sendTelegramMessage(chatID int64, text string) error {
 	url := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", token)
 	
 	payload := map[string]interface{}{
-		"chat_id": chatID,
-		"text":    text,
+		"chat_id":    chatID,
+		"text":       text,
+		"parse_mode": "Markdown",
 	}
 	
 	body, _ := json.Marshal(payload)
