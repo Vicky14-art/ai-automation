@@ -33,7 +33,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./ai-automation/${{ matrix.service }} # <---  PATH INI SAMA DENGAN YANG ADA DI VPS
+          context: ./${{ matrix.service }} # <---  PATH INI SAMA DENGAN YANG ADA DI GIT
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_REPO }}/${{ matrix.service }}:latest
 
@@ -48,6 +48,14 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            # Pindah ke folder tempat project berada di VPS
+            cd ~/ai-automation
+            
+            echo "Memperbarui workload di K3s..."
             export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+            
+            # Restart deployment di K3s
             kubectl rollout restart deployment/api-gateway -n ai-automation-stg
             kubectl rollout restart deployment/ai-worker -n ai-automation-stg
+            
+            echo "Deployment Selesai!"
