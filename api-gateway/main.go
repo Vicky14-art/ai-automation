@@ -12,10 +12,10 @@ import (
 )
 
 type AITaskPayload struct {
-	TaskID   string `json:"task_id"`
-	Prompt   string `json:"prompt"`
-	ChatID   int64  `json:"chat_id"`
-	FileID   string `json:"file_id,omitempty"`
+	TaskID string `json:"task_id"`
+	Prompt string `json:"prompt"`
+	ChatID int64  `json:"chat_id"`
+	FileID string `json:"file_id,omitempty"`
 }
 
 func main() {
@@ -65,11 +65,13 @@ func main() {
 		task := asynq.NewTask("ai:generate", payload)
 		info, err := client.Enqueue(task)
 		if err != nil {
-			return c.Send("Gagal mengirim antrean ke Worker AI.")
+			log.Printf("CRITICAL ERROR ENQUEUE: %v", err)
+			// Kirim error detail ke user untuk debugging sementara
+			return c.Send(fmt.Sprintf("Gagal antre: %v", err))
 		}
 
 		log.Printf("Task %s antre untuk ChatID %d. Queue: %s", taskID, chatID, info.Queue)
-		
+
 		// Balas ke user
 		return c.Send("⏳ Sedang memproses teks Anda...")
 	})
@@ -100,11 +102,13 @@ func main() {
 		task := asynq.NewTask("ai:generate", payload)
 		info, err := client.Enqueue(task)
 		if err != nil {
-			return c.Send("Gagal mengirim antrean ke Worker AI.")
+			log.Printf("CRITICAL ERROR ENQUEUE: %v", err)
+			// Kirim error detail ke user untuk debugging sementara
+			return c.Send(fmt.Sprintf("Gagal antre: %v", err))
 		}
 
 		log.Printf("Task %s (Gambar) antre untuk ChatID %d. Queue: %s", taskID, chatID, info.Queue)
-		
+
 		// Balas ke user
 		return c.Send("🖼 Sedang memproses dan menganalisis gambar Anda...")
 	})
