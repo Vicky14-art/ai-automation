@@ -73,7 +73,7 @@ func main() {
 		log.Printf("Task %s antre untuk ChatID %d. Queue: %s", taskID, chatID, info.Queue)
 
 		// Balas ke user
-		return c.Send("⏳ Sedang memproses teks Anda...")
+		return c.Send("⏳ Sedang memproses teks Anda....")
 	})
 
 	// Handle pesan gambar (Photo)
