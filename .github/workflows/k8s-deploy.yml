@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_REPO: Vicky14-art # <--- SESUAIKAN DI SINI
+  IMAGE_REPO: vicky14-art # <--- SESUAIKAN DI SINI
 
 jobs:
   build-and-push:
