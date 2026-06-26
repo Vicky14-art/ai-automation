@@ -1,0 +1,53 @@
+name: CI/CD K8s Deployment
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_REPO: Vicky14-art # <--- SESUAIKAN DI SINI
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    strategy:
+      matrix:
+        service: [api-gateway, worker]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ai-automation/${{ matrix.service }} # <---  PATH INI SAMA DENGAN YANG ADA DI VPS
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_REPO }}/${{ matrix.service }}:latest
+
+  deploy-to-k3s:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH to VPS & Restart K3s Deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+            kubectl rollout restart deployment/api-gateway -n ai-automation-stg
+            kubectl rollout restart deployment/ai-worker -n ai-automation-stg

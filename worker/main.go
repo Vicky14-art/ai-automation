@@ -95,25 +95,25 @@ func sendTelegramMessage(chatID int64, text string) error {
 	}
 
 	url := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", token)
-	
+
 	payload := map[string]interface{}{
 		"chat_id":    chatID,
 		"text":       text,
 		"parse_mode": "Markdown",
 	}
-	
+
 	body, _ := json.Marshal(payload)
-	
+
 	resp, err := http.Post(url, "application/json", strings.NewReader(string(body)))
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
-	
+
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("telegram API error status %d", resp.StatusCode)
 	}
-	
+
 	return nil
 }
 
@@ -127,7 +127,7 @@ func callGeminiAPI(prompt string, fileID string) (string, error) {
 
 	model := os.Getenv("GEMINI_MODEL")
 	if model == "" {
-		model = "gemini-2.5-flash"
+		model = "gemini-1.5-flash"
 	}
 
 	// Persiapkan part untuk dikirim
